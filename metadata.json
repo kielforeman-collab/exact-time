@@ -1,0 +1,6 @@
+{
+  "name": "ExactTime",
+  "description": "Precision alarm clock with second-level accuracy, live chronometer, haptic tick cadence, and advanced scheduling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">ExactTime</string>
+
+    <!-- Navigation Destinations -->
+    <string name="nav_clock">Clock</string>
+    <string name="nav_alarms">Alarms</string>
+    <string name="nav_events">Events</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Clock & Chronometer -->
+    <string name="clock_subtitle_live">SYNCHRONIZED SYSTEM CHRONOMETER</string>
+    <string name="clock_mode_hybrid">Dial</string>
+    <string name="clock_mode_digital">Digital</string>
+    <string name="clock_standby_mode">StandBy</string>
+    <string name="clock_quick_exact_alarms">QUICK SECOND-PRECISION ALARMS</string>
+    <string name="clock_haptic_tick_cadence">HAPTIC &amp; AUDIO TICK CADENCE</string>
+    <string name="clock_next_alarm_label">NEXT ARMED ALARM</string>
+    <string name="clock_no_armed_alarms">No armed alarms scheduled</string>
+
+    <!-- Alarms -->
+    <string name="alarms_title">Exact Alarms</string>
+    <string name="alarms_add_new">New Alarm</string>
+    <string name="alarms_edit">Edit Alarm</string>
+    <string name="alarms_empty_title">No Precision Alarms Yet</string>
+    <string name="alarms_empty_subtitle">Schedule an alarm down to the exact second, set recurring intervals, or tap a quick preset on the Clock tab.</string>
+    <string name="alarms_test_fire">Test Ring</string>
+    <string name="alarms_skip_next">Skip Next</string>
+    <string name="alarms_unskip_next">Restore Next</string>
+    <string name="alarms_delete">Delete</string>
+
+    <!-- Events & Astronomical -->
+    <string name="events_title">Countdowns &amp; Ephemeris</string>
+    <string name="events_add_new">New Countdown</string>
+    <string name="events_empty_title">No Active Countdowns</string>
+    <string name="events_empty_subtitle">Track exact future moments down to the second and optionally arm an automatic T-0 alarm.</string>
+    <string name="ephemeris_title">SOLAR, LUNAR &amp; EPOCH TELEMETRY</string>
+
+    <!-- Ringing Screen -->
+    <string name="ringing_dismiss">Dismiss Alarm</string>
+    <string name="ringing_snooze">Snooze</string>
+    <string name="ringing_exact_trigger">EXACT TRIGGER TIME</string>
+
+    <!-- Notifications -->
+    <string name="channel_alarm_name">ExactTime Alarms</string>
+    <string name="channel_alarm_desc">High-priority second-precision alarms with audio and vibration</string>
+    <string name="channel_pre_alarm_name">Pre-Alarm Countdown Warnings</string>
+    <string name="channel_pre_alarm_desc">Subtle lead warnings shortly before an exact alarm fires</string>
+
+    <!-- Permissions & Settings -->
+    <string name="settings_title">Precision Settings</string>
+    <string name="perm_exact_alarm_title">Exact Alarm Precision</string>
+    <string name="perm_exact_alarm_granted">Granted — alarms fire on the exact second</string>
+    <string name="perm_exact_alarm_denied">Required to fire alarms on the exact second</string>
+    <string name="perm_notifications_title">Alarm Notifications</string>
+    <string name="perm_notifications_granted">Granted — full-screen alerts &amp; actions active</string>
+    <string name="perm_notifications_denied">Tap to allow lock-screen and banner alerts</string>
+</resources>
