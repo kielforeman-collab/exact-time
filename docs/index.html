@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExactTime — Second-Precision Alarm Clock &amp; Chronometer for Android</title>
+  <meta name="description" content="ExactTime is a Swiss-horology-inspired Android alarm clock and live chronometer with second-level AlarmManager accuracy, haptic tick cadence, OLED StandBy mode, and solar/lunar ephemeris.">
+  <meta name="theme-color" content="#0D0F12">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ExactTime — Second-Precision Alarm Clock for Android">
+  <meta property="og:description" content="Schedule alarms down to the exact second with live hybrid chronometer, haptic tick cadence, OLED Night Red StandBy, and NOAA solar/lunar ephemeris.">
+  <meta property="og:image" content="assets/chrono-banner.jpg">
+  <meta property="og:url" content="https://kielforeman-collab.github.io/exact-time/">
+
+  <link rel="icon" type="image/jpeg" href="assets/app-icon.jpg">
+
+  <!-- Typography matching app/src/main/java/com/example/ui/theme/Type.kt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Sticky Instrument Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand" id="nav-brand-link">
+        <img src="assets/app-icon.jpg" alt="ExactTime app icon" class="brand-icon" width="34" height="34">
+        <span>ExactTime</span>
+        <span class="brand-tag">Android</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#chronometer">Chronometer</a>
+        <a href="#scheduling">Scheduling</a>
+        <a href="#standby">StandBy</a>
+        <a href="#ephemeris">Ephemeris</a>
+        <a href="#build">Build</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="theme-toggle" id="theme-toggle-btn" aria-label="Switch between Obsidian dark and Alabaster light themes">
+          <span class="theme-swatch" aria-hidden="true"></span>
+          <span id="theme-toggle-label">Obsidian</span>
+        </button>
+        <a href="https://github.com/kielforeman-collab/exact-time" class="btn btn-primary btn-sm" id="header-github-link" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero Section + Live Interactive Chronometer -->
+    <section class="hero" id="chronometer">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="hero-eyebrow">Precision Android Chronometer &amp; Alarm Engine</p>
+          <h1 class="hero-title">Alarms down to the exact second.</h1>
+          <p class="hero-lead">
+            ExactTime replaces rounded minute-level alarms with a synchronized Android chronometer,
+            second-accurate <code>AlarmManager</code> scheduling, tactile tick cadence, OLED StandBy mode,
+            and live solar and lunar ephemeris.
+          </p>
+
+          <div class="hero-actions">
+            <a href="https://github.com/kielforeman-collab/exact-time" class="btn btn-primary" id="hero-repo-cta" target="_blank" rel="noopener noreferrer">
+              View Source on GitHub
+            </a>
+            <a href="#build" class="btn btn-secondary" id="hero-build-cta">
+              Build APK Locally
+            </a>
+          </div>
+
+          <div class="spec-strip" aria-label="Technical specifications">
+            <div class="spec-item">
+              <span class="spec-value">±1s</span>
+              <span class="spec-label">Exact Trigger</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-value">API 24–36</span>
+              <span class="spec-label">Android 7.0+</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-value">Compose</span>
+              <span class="spec-label">Material 3 + Room</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-value">Offline</span>
+              <span class="spec-label">Zero Telemetry</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Interactive Chronometer Instrument -->
+        <aside class="chronometer-instrument" aria-label="Interactive ExactTime Chronometer Preview">
+          <div class="instrument-bar">
+            <div class="instrument-status">
+              <span class="sync-indicator" aria-hidden="true"></span>
+              <span>Synchronized Chronometer</span>
+            </div>
+
+            <div class="segmented-control" role="group" aria-label="Clock display mode">
+              <button type="button" class="seg-btn active" id="mode-dial-btn" data-clock-mode="dial">Dial</button>
+              <button type="button" class="seg-btn" id="mode-digital-btn" data-clock-mode="digital">Digital</button>
+            </div>
+          </div>
+
+          <div class="clock-stage" id="clock-stage">
+            <div class="dial-wrapper">
+              <canvas id="precision-dial-canvas" width="448" height="448" aria-label="Live analog precision clock dial"></canvas>
+            </div>
+
+            <div class="digital-readout-block">
+              <div class="digital-time-row" aria-live="off">
+                <span class="time-main" id="hero-time-main">00:00:00</span>
+                <span class="time-frac" id="hero-time-frac">.00</span>
+                <span class="time-ampm" id="hero-time-ampm"></span>
+              </div>
+              <div class="date-tz-meta" id="hero-date-tz">Loading local meridian…</div>
+            </div>
+
+            <div class="second-bar-track" aria-hidden="true">
+              <div class="second-bar-fill" id="hero-second-fill"></div>
+            </div>
+          </div>
+
+          <div class="instrument-controls">
+            <div class="control-row">
+              <span class="control-label">Format</span>
+              <div class="chip-group">
+                <button type="button" class="chip active" id="toggle-24h-btn">24-Hour</button>
+                <button type="button" class="chip active" id="toggle-centis-btn">Centiseconds</button>
+              </div>
+            </div>
+
+            <div class="control-row">
+              <span class="control-label">Audio Tick Cadence</span>
+              <div class="chip-group" role="group" aria-label="Audio tick cadence">
+                <button type="button" class="chip active" id="tick-off-btn" data-tick="0">Off</button>
+                <button type="button" class="chip" id="tick-1s-btn" data-tick="1">1s</button>
+                <button type="button" class="chip" id="tick-5s-btn" data-tick="5">5s</button>
+                <button type="button" class="chip" id="tick-10s-btn" data-tick="10">10s</button>
+                <button type="button" class="chip" id="tick-30s-btn" data-tick="30">30s</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Brushed Steel Artwork Banner -->
+    <section class="banner-section" aria-label="ExactTime horological design showcase">
+      <div class="container">
+        <figure class="banner-frame">
+          <img
+            src="assets/chrono-banner.jpg"
+            alt="Brushed metallic concentric chronograph dial with luminous vermilion second hand"
+            class="banner-img"
+            loading="eager"
+          >
+          <figcaption class="banner-caption">
+            <h2>Engineered like a mechanical instrument. Built natively for Android.</h2>
+            <p>Obsidian Dark · Alabaster Light · Tabular JetBrains Mono</p>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Second-Level Scheduling Architecture -->
+    <section class="section" id="scheduling">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">Exact Alarm Architecture</p>
+          <h2 class="section-title">When the minute isn’t accurate enough.</h2>
+          <p class="section-desc">
+            Standard clock apps round every trigger to <code>:00</code>. ExactTime schedules down to the exact second
+            for market opens, transit departures, lab intervals, broadcasts, and timed focus blocks.
+          </p>
+        </div>
+
+        <div class="split-grid">
+          <div class="feature-list">
+            <article class="feature-row">
+              <div class="feature-row-head">
+                <h3>Four Precision Schedule Modes</h3>
+                <span class="feature-code">ONE_TIME · WEEKLY · INTERVAL · MONTHLY</span>
+              </div>
+              <p>
+                Fire once on an exact calendar date and second, repeat on custom weekday bitmasks,
+                cycle on intervals down to every 10 seconds, or trigger on a fixed day each month.
+              </p>
+            </article>
+
+            <article class="feature-row">
+              <div class="feature-row-head">
+                <h3>Pre-Alarm Lead Warnings &amp; Fade-In</h3>
+                <span class="feature-code">T-5s · T-10s · T-30s</span>
+              </div>
+              <p>
+                Receive a subtle pre-alarm heads-up before T-0 arrives, pair with gradual audio fade-in
+                (10s or 30s), and skip or restore the next occurrence with one tap.
+              </p>
+            </article>
+
+            <article class="feature-row">
+              <div class="feature-row-head">
+                <h3>Tactile Cadence &amp; Vibration Profiles</h3>
+                <span class="feature-code">SHARP_PULSE · DOUBLE_TAP · CONTINUOUS</span>
+              </div>
+              <p>
+                Choose crisp haptic and audio tick intervals (1s, 5s, 10s, 30s) on the live chronometer,
+                and assign distinct vibration patterns across 7 alarm categories.
+              </p>
+            </article>
+
+            <article class="feature-row">
+              <div class="feature-row-head">
+                <h3>Boot-Resilient Exact Delivery</h3>
+                <span class="feature-code">AlarmManager · BootReceiver</span>
+              </div>
+              <p>
+                Backed by Room persistence, a foreground ringing service, full-screen lock-screen alerts,
+                and automatic rescheduling after device reboots.
+              </p>
+            </article>
+          </div>
+
+          <!-- Interactive Alarm Preset Inspector -->
+          <div class="alarm-inspector" aria-label="Interactive exact alarm preset inspector">
+            <div class="inspector-header">
+              <span class="inspector-title">Armed Alarm Inspector</span>
+              <span class="mono" style="font-size:0.74rem;color:var(--text-muted);">Tap preset to inspect</span>
+            </div>
+
+            <div class="alarm-tabs" role="tablist" aria-label="Example exact alarms">
+              <button type="button" class="alarm-tab active" id="preset-market-btn" data-preset="market" role="tab" aria-selected="true">
+                <span class="alarm-tab-time">09:30:00</span>
+                <span class="alarm-tab-label">NYSE Opening Bell</span>
+              </button>
+              <button type="button" class="alarm-tab" id="preset-transit-btn" data-preset="transit" role="tab" aria-selected="false">
+                <span class="alarm-tab-time">07:42:30</span>
+                <span class="alarm-tab-label">Express Platform Gate</span>
+              </button>
+              <button type="button" class="alarm-tab" id="preset-interval-btn" data-preset="interval" role="tab" aria-selected="false">
+                <span class="alarm-tab-time">Every 00:05:00</span>
+                <span class="alarm-tab-label">Lab Telemetry Sample</span>
+              </button>
+              <button type="button" class="alarm-tab" id="preset-quick-btn" data-preset="quick" role="tab" aria-selected="false">
+                <span class="alarm-tab-time">Next :00</span>
+                <span class="alarm-tab-label">Quick Minute Sync</span>
+              </button>
+            </div>
+
+            <div class="alarm-detail-card" id="alarm-detail-card">
+              <div class="alarm-detail-top">
+                <div>
+                  <div class="alarm-big-time" id="inspector-time">09:30:00</div>
+                  <div class="alarm-big-name" id="inspector-name">NYSE Opening Bell</div>
+                </div>
+                <span class="category-badge" id="inspector-category">Market</span>
+              </div>
+
+              <div class="alarm-meta-grid">
+                <div class="meta-cell">
+                  <span class="meta-cell-label">Schedule Mode</span>
+                  <span class="meta-cell-val" id="inspector-schedule">Weekly · Mon–Fri</span>
+                </div>
+                <div class="meta-cell">
+                  <span class="meta-cell-label">Pre-Alarm Lead</span>
+                  <span class="meta-cell-val" id="inspector-lead">T-10s Warning</span>
+                </div>
+                <div class="meta-cell">
+                  <span class="meta-cell-label">Vibration Profile</span>
+                  <span class="meta-cell-val" id="inspector-vibration">Sharp Pulse</span>
+                </div>
+                <div class="meta-cell">
+                  <span class="meta-cell-label">Audio / Fade-In</span>
+                  <span class="meta-cell-val" id="inspector-fade">Sound On · Instant</span>
+                </div>
+              </div>
+
+              <div class="alarm-countdown-bar">
+                <span>EXACT TRIGGER STATUS</span>
+                <span id="inspector-countdown">ARMED · LIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OLED StandBy Mode -->
+    <section class="section" id="standby">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">Full-Screen OLED StandBy</p>
+          <h2 class="section-title">A dedicated desk and bedside chronometer.</h2>
+          <p class="section-desc">
+            Switch into full-screen StandBy with keep-screen-on wake lock in portrait or landscape.
+            Enable Night Red mode to preserve dark adaptation with low-glare crimson numerals on pure black OLED pixels.
+          </p>
+        </div>
+
+        <div class="standby-layout">
+          <div class="standby-device" id="standby-device">
+            <div class="standby-top">
+              <span class="standby-kicker">STANDBY CHRONOMETER</span>
+              <button type="button" class="night-toggle-btn" id="standby-night-btn" aria-pressed="false">
+                Night Red: Off
+              </button>
+            </div>
+
+            <div class="standby-clock-face">
+              <div>
+                <span class="standby-time" id="standby-time-main">00:00:00</span><span class="standby-frac" id="standby-time-frac">.00</span>
+              </div>
+              <div class="standby-date" id="standby-date">THURSDAY · NOV 26</div>
+            </div>
+
+            <div class="standby-footer">
+              <span>NEXT ARMED ALARM</span>
+              <span id="standby-next-alarm">07:00:00 · ROUTINE</span>
+            </div>
+          </div>
+
+          <div class="standby-points">
+            <div class="standby-point">
+              <h3>True #000000 OLED Black</h3>
+              <p>Zero background glow on AMOLED displays, paired with adaptive typography that scales cleanly from portrait nightstands to landscape desk docks.</p>
+            </div>
+            <div class="standby-point">
+              <h3>Night Red Low-Glare Mode</h3>
+              <p>Toggle directly from the StandBy chrome to shift titanium white and vermilion accents into calibrated <code>#D63922</code> dark-room red.</p>
+            </div>
+            <div class="standby-point">
+              <h3>Wake-Lock Managed Safely</h3>
+              <p>Applies <code>FLAG_KEEP_SCREEN_ON</code> only while StandBy is active and clears it immediately on exit or back navigation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Astronomical Ephemeris & Countdowns -->
+    <section class="section" id="ephemeris">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">Countdowns &amp; Ephemeris</p>
+          <h2 class="section-title">Solar, lunar, and epoch telemetry — computed live offline.</h2>
+          <p class="section-desc">
+            Track future milestones down to the second with automatic T-0 alarm arming, alongside
+            real-time NOAA solar elevation, sunrise/sunset, synodic moon phase, ISO week, and Unix epoch.
+            Try the live telemetry engine below using the exact calculations from <code>EphemerisCalculator.kt</code>.
+          </p>
+        </div>
+
+        <div class="ephemeris-panel">
+          <div class="ephemeris-toolbar">
+            <span class="inspector-title">Solar, Lunar &amp; Epoch Telemetry</span>
+            <div class="city-selector" id="city-selector" role="group" aria-label="Reference meridian city">
+              <button type="button" class="chip active" data-city="0">Local</button>
+              <button type="button" class="chip" data-city="1">Zurich</button>
+              <button type="button" class="chip" data-city="2">New York</button>
+              <button type="button" class="chip" data-city="3">London</button>
+              <button type="button" class="chip" data-city="4">Tokyo</button>
+              <button type="button" class="chip" data-city="5">San Francisco</button>
+              <button type="button" class="chip" data-city="6">Sydney</button>
+            </div>
+          </div>
+
+          <div class="ephemeris-grid">
+            <!-- Solar Card -->
+            <div class="telemetry-card">
+              <div>
+                <div class="telemetry-kicker" id="eph-city-label">Local Meridian · Solar</div>
+                <div class="telemetry-main" id="eph-solar-elev">+0.0°</div>
+                <div class="telemetry-sub" id="eph-daylight-status">Solar Elevation</div>
+              </div>
+              <div>
+                <div class="daylight-track" aria-hidden="true">
+                  <div class="daylight-fill" id="eph-daylight-fill" style="width: 50%"></div>
+                </div>
+                <div class="telemetry-pairs" style="margin-top:10px;">
+                  <span>RISE <strong id="eph-sunrise">--:--:--</strong></span>
+                  <span>SET <strong id="eph-sunset">--:--:--</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lunar Card -->
+            <div class="telemetry-card">
+              <div>
+                <div class="telemetry-kicker">Synodic Lunar Phase</div>
+                <div class="moon-row" style="margin-top:10px;">
+                  <div class="moon-disc" aria-hidden="true">
+                    <div class="moon-lit" id="eph-moon-lit"></div>
+                  </div>
+                  <div>
+                    <div class="telemetry-main" id="eph-moon-name" style="font-size:1.2rem;">—</div>
+                    <div class="telemetry-sub" id="eph-moon-illum">--% illuminated</div>
+                  </div>
+                </div>
+              </div>
+              <div class="telemetry-pairs">
+                <span>LUNAR AGE <strong id="eph-lunar-age">--.- d</strong></span>
+                <span>CYCLE <strong>29.53 d</strong></span>
+              </div>
+            </div>
+
+            <!-- Epoch & Calendar Card -->
+            <div class="telemetry-card">
+              <div>
+                <div class="telemetry-kicker">UTC &amp; Unix Epoch</div>
+                <div class="telemetry-main" id="eph-unix-epoch">0000000000</div>
+                <div class="telemetry-sub" id="eph-utc-iso">0000-00-00T00:00:00Z</div>
+              </div>
+              <div class="telemetry-pairs">
+                <span>ISO WEEK <strong id="eph-iso-week">W--</strong></span>
+                <span>DAY <strong id="eph-day-year">--- / 365</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Open Source & Build Section -->
+    <section class="section" id="build">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-kicker">Open Source Android App</p>
+          <h2 class="section-title">Clone, inspect, and build from source.</h2>
+          <p class="section-desc">
+            ExactTime is built with modern Kotlin and Jetpack Compose with zero third-party ad SDKs or cloud dependencies.
+            Build a debug APK locally with Android Studio or Gradle in seconds.
+          </p>
+        </div>
+
+        <div class="build-grid">
+          <div class="code-card">
+            <div class="code-header">
+              <span>Terminal · Build &amp; Install</span>
+              <button type="button" class="copy-btn" id="copy-build-cmd-btn">Copy</button>
+            </div>
+            <pre class="code-body" id="build-commands"><span class="code-comment"># Clone the repository</span>
+<span class="code-cmd">git</span> clone https://github.com/kielforeman-collab/exact-time.git
+<span class="code-cmd">cd</span> exact-time
+
+<span class="code-comment"># Build the debug APK</span>
+<span class="code-cmd">./gradlew</span> assembleDebug
+
+<span class="code-comment"># Install directly to a connected Android device</span>
+<span class="code-cmd">./gradlew</span> installDebug</pre>
+          </div>
+
+          <table class="stack-table" aria-label="ExactTime technology stack">
+            <tbody>
+              <tr>
+                <th>Language &amp; UI</th>
+                <td>Kotlin · Jetpack Compose · Material 3</td>
+              </tr>
+              <tr>
+                <th>Android SDK</th>
+                <td>minSdk 24 (Android 7.0) · targetSdk 36</td>
+              </tr>
+              <tr>
+                <th>Scheduling</th>
+                <td><code>AlarmManager</code> exact clock + Foreground Service</td>
+              </tr>
+              <tr>
+                <th>Persistence</th>
+                <td>Room Database · Preferences DataStore</td>
+              </tr>
+              <tr>
+                <th>Themes</th>
+                <td>Obsidian Dark · Alabaster Light · System</td>
+              </tr>
+              <tr>
+                <th>Repository</th>
+                <td>
+                  <a href="https://github.com/kielforeman-collab/exact-time" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">
+                    kielforeman-collab/exact-time
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <img src="assets/app-icon.jpg" alt="" class="brand-icon" width="26" height="26" style="width:26px;height:26px;border-radius:7px;">
+        <span><strong>ExactTime</strong> — Precision Alarm Clock &amp; Chronometer for Android</span>
+      </div>
+      <div class="footer-right">
+        <span id="footer-utc-clock">UTC 00:00:00</span>
+        <a href="https://github.com/kielforeman-collab/exact-time" target="_blank" rel="noopener noreferrer">Repository</a>
+        <a href="https://github.com/kielforeman-collab/exact-time/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
